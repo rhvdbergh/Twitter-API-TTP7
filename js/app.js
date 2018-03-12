@@ -13,32 +13,37 @@
 const express = require('express');
 const app = express();
 
+const pug = require('pug');
+
 const Twit = require('twit');
 const config = require('./config.js');
 
 const T = new Twit(config.accessDetails);
 
+app.set('view engine', 'pug');
+
 // general response
 app.get('/', (req, res, next) => {
 
-    res.send("You've reached the Twitter API app.");
+    let message = "You've reached the Twitter API app. Rendered using Pug.";
+    res.render('index', { message });
 
 });
 
 // retrieve 5 most recent tweets
 T.get('statuses/user_timeline', { count: 5 }, function(err, data, response) {
-    console.log(data)
+    // console.log(data)
 });
 
 // retrieve 5 most recent friends (i.e. persons that the user started following)
 T.get('friends/list', { count: 5 }, function(err, data, response) {
-    console.log(data)
+    // console.log(data)
 });
 
 // retrieves last 5 private messages sent
 // note, this API endpoint is deprecated and will be retired on June 19, 2018
 T.get('direct_messages/sent', { count: 5 }, function(err, data, response) {
-    console.log(data)
+    // console.log(data)
 });
 
 app.listen(3000, () => {
