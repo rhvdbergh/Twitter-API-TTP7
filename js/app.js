@@ -35,6 +35,12 @@ T.get('friends/list', { count: 5 }, function(err, data, response) {
     console.log(data)
 });
 
+// retrieves last 5 private messages sent
+// note, this API endpoint is deprecated and will be retired on June 19, 2018
+T.get('direct_messages/sent', { count: 5 }, function(err, data, response) {
+    console.log(data)
+});
+
 app.listen(3000, () => {
     console.log('Twitter API app listening on port 3000');
 })
