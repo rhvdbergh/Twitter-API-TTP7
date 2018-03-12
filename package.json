@@ -2,7 +2,7 @@
     "name": "treehouse-techdegree-project_7-twitter-api",
     "version": "1.0.0",
     "description": "Node.js app to access the Twitter API (REST) - retrieves 5 most recent tweets, followers, and private messages. The user can also send a tweet, and displays the user's Twitter background image.",
-    "main": "index.js",
+    "main": "js/app.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
     },
