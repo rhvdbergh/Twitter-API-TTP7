@@ -13,6 +13,15 @@
 const express = require('express');
 const app = express();
 
+const Twit = require('twit');
+const config = require('./config.js');
+
+const t = new Twit(config.accessDetails);
+
+app.get('/', (req, res, next) => {
+    res.send("You've reached the Twitter API app.");
+});
+
 app.listen(3000, () => {
     console.log('Twitter API app listening on port 3000');
 })
