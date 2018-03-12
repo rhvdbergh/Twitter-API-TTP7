@@ -16,10 +16,18 @@ const app = express();
 const Twit = require('twit');
 const config = require('./config.js');
 
-const t = new Twit(config.accessDetails);
+const T = new Twit(config.accessDetails);
 
+// general response
 app.get('/', (req, res, next) => {
+
     res.send("You've reached the Twitter API app.");
+
+});
+
+// retrieve 5 most recent friends (i.e. persons that the user started following)
+T.get('friends/list', { count: 5 }, function(err, data, response) {
+    console.log(data)
 });
 
 app.listen(3000, () => {
