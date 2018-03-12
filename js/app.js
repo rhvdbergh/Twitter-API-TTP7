@@ -25,6 +25,11 @@ app.get('/', (req, res, next) => {
 
 });
 
+// retrieve 5 most recent tweets
+T.get('statuses/user_timeline', { count: 5 }, function(err, data, response) {
+    console.log(data)
+});
+
 // retrieve 5 most recent friends (i.e. persons that the user started following)
 T.get('friends/list', { count: 5 }, function(err, data, response) {
     console.log(data)
