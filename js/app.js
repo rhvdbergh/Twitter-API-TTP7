@@ -20,13 +20,21 @@ const config = require('./config.js');
 
 const T = new Twit(config.accessDetails);
 
+// variables that needs to be sent to index.pug:
+// username - twitter handle
+// numFriends - number of people user follows, = "following"
+
+// set up route to serve static files
+app.use(express.static('public'));
+
+// set up view engine - we'll render with pug
 app.set('view engine', 'pug');
 
 // general response
 app.get('/', (req, res, next) => {
 
-    let message = "You've reached the Twitter API app. Rendered using Pug.";
-    res.render('index', { message });
+    let username = "USERNAME.";
+    res.render('index', { username });
 
 });
 
@@ -46,6 +54,7 @@ T.get('direct_messages/sent', { count: 5 }, function(err, data, response) {
     // console.log(data)
 });
 
+// run the app on port 3000, and send a message to the console stating the port
 app.listen(3000, () => {
     console.log('Twitter API app listening on port 3000');
 })
