@@ -20,37 +20,49 @@ const config = require('./config.js');
 
 const T = new Twit(config.accessDetails);
 
+let interpolationData = {}; // a variable to hold data to interpolate in pug
+
 // set up route to serve static files
 app.use(express.static('public'));
 
 // set up view engine - we'll render with pug
 app.set('view engine', 'pug');
 
-// general response
-app.get('/', (req, res, next) => {
-
-    // render the index.pug file with data passed in as an object
-    res.render('index', {});
-
-});
+// ------- retrieve the tweets, each section in succession
 
 // retrieve 5 most recent tweets
-T.get('statuses/user_timeline', { count: 5 }, function(err, data, response) {
-    // console.log(data)
+app.get('/', (req, res, next) => {
+    T.get('statuses/user_timeline', { count: 5 }, function(err, data, response) {
+        // console.log(data)
+        interpolationData.screen_name = data[0].user.screen_name;
+        next();
+    });
 });
 
 // retrieve 5 most recent friends (i.e. persons that the user started following)
-T.get('friends/list', { count: 5 }, function(err, data, response) {
-    // console.log(data)
+app.get('/', (req, res, next) => {
+    T.get('friends/list', { count: 5 }, function(err, data, response) {
+        // console.log(data)
+        next();
+    });
 });
 
 // retrieves last 5 private messages sent
-// note, this API endpoint is deprecated and will be retired on June 19, 2018
-T.get('direct_messages/sent', { count: 5 }, function(err, data, response) {
-    // console.log(data)
+app.get('/', (req, res, next) => {
+    // note, this API endpoint is deprecated and will be retired on June 19, 2018
+    T.get('direct_messages/sent', { count: 5 }, function(err, data, response) {
+        // console.log(data)
+        next();
+    });
+});
+
+// ------- render the data on the page
+app.get('/', (req, res, next) => {
+    // render the index.pug file with data passed in as an object
+    res.render('index', interpolationData);
 });
 
 // run the app on port 3000, and send a message to the console stating the port
 app.listen(3000, () => {
     console.log('Twitter API app listening on port 3000');
-})
+});
