@@ -20,10 +20,6 @@ const config = require('./config.js');
 
 const T = new Twit(config.accessDetails);
 
-// variables that needs to be sent to index.pug:
-// username - twitter handle
-// numFriends - number of people user follows, = "following"
-
 // set up route to serve static files
 app.use(express.static('public'));
 
@@ -33,8 +29,8 @@ app.set('view engine', 'pug');
 // general response
 app.get('/', (req, res, next) => {
 
-    let username = "USERNAME.";
-    res.render('index', { username });
+    // render the index.pug file with data passed in as an object
+    res.render('index', {});
 
 });
 
