@@ -34,11 +34,15 @@ app.set('view engine', 'pug');
 app.get('/', (req, res, next) => {
     T.get('statuses/user_timeline', { count: 5 }, function(err, data, response) {
 
+        // save the username - this assumes the user has at least one tweet
         interpolationData.screen_name = data[0].user.screen_name;
-        interpolationData.tweets = [];
+        interpolationData.name = data[0].user.name;
+        interpolationData.friends_count = data[0].user.friends_count;
+        interpolationData.tweets = []; // array holding data about five most recent tweets
+
 
         // cycle through each tweet and retrieve the data to render
-        data.forEach((tweet, index) => {
+        data.forEach((tweet) => {
 
             // build a tweetObject to store in interpolationData.tweets
             // has to contain -message content -# of retweets -# of likes -date tweeted
@@ -48,11 +52,11 @@ app.get('/', (req, res, next) => {
             obj.retweet_count = tweet.retweet_count;
             obj.favorite_count = tweet.favorite_count;
             obj.created_at = tweet.created_at;
+            let date = new Date(tweet.created_at);
+            obj.date = date.toDateString();
 
             interpolationData.tweets.push(obj);
         });
-
-        console.log(interpolationData.tweets);
 
         next();
     });
@@ -61,7 +65,25 @@ app.get('/', (req, res, next) => {
 // retrieve 5 most recent friends (i.e. persons that the user started following)
 app.get('/', (req, res, next) => {
     T.get('friends/list', { count: 5 }, function(err, data, response) {
-        // console.log(data)
+        // console.log(data);
+
+        interpolationData.friends = []; // array holding data about five most recent friends
+
+        // cycle through each tweet and retrieve the data to render
+        data.users.forEach((friend) => {
+
+            // build a tweetObject to store in interpolationData.tweets
+            // has to contain -profile image -real name -screenname
+
+            let obj = {};
+            obj.profile_image_url = friend.profile_image_url;
+            obj.name = friend.name;
+            obj.screen_name = friend.screen_name;
+
+            interpolationData.friends.push(obj);
+        });
+
+
         next();
     });
 });
