@@ -2,3 +2,4 @@ node_modules/
 config.js
 sample_tweet.js
 sample_friends.js
+sample_direct_message.js
