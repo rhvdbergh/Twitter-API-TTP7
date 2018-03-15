@@ -20,7 +20,7 @@ const config = require('./config.js');
 
 const T = new Twit(config.accessDetails);
 
-let interpolationData = {}; // a variable to hold data to interpolate in pug
+let interpolationData = []; // a variable to hold data to interpolate in pug
 
 // set up route to serve static files
 app.use(express.static('public'));
@@ -33,8 +33,27 @@ app.set('view engine', 'pug');
 // retrieve 5 most recent tweets
 app.get('/', (req, res, next) => {
     T.get('statuses/user_timeline', { count: 5 }, function(err, data, response) {
-        // console.log(data)
+
         interpolationData.screen_name = data[0].user.screen_name;
+        interpolationData.tweets = [];
+
+        // cycle through each tweet and retrieve the data to render
+        data.forEach((tweet, index) => {
+
+            // build a tweetObject to store in interpolationData.tweets
+            // has to contain -message content -# of retweets -# of likes -date tweeted
+
+            let obj = {};
+            obj.text = tweet.text;
+            obj.retweet_count = tweet.retweet_count;
+            obj.favorite_count = tweet.favorite_count;
+            obj.created_at = tweet.created_at;
+
+            interpolationData.tweets.push(obj);
+        });
+
+        console.log(interpolationData.tweets);
+
         next();
     });
 });
