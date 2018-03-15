@@ -44,7 +44,7 @@ app.get('/', (req, res, next) => {
         // cycle through each tweet and retrieve the data to render
         data.forEach((tweet) => {
 
-            // build a tweetObject to store in interpolationData.tweets
+            // build a tweet object to store in interpolationData.tweets
             // has to contain -message content -# of retweets -# of likes -date tweeted
 
             let obj = {};
@@ -72,7 +72,7 @@ app.get('/', (req, res, next) => {
         // cycle through each tweet and retrieve the data to render
         data.users.forEach((friend) => {
 
-            // build a tweetObject to store in interpolationData.tweets
+            // build a friend object to store in interpolationData.friends
             // has to contain -profile image -real name -screenname
 
             let obj = {};
@@ -82,8 +82,6 @@ app.get('/', (req, res, next) => {
 
             interpolationData.friends.push(obj);
         });
-
-
         next();
     });
 });
@@ -92,7 +90,26 @@ app.get('/', (req, res, next) => {
 app.get('/', (req, res, next) => {
     // note, this API endpoint is deprecated and will be retired on June 19, 2018
     T.get('direct_messages/sent', { count: 5 }, function(err, data, response) {
-        // console.log(data)
+        console.log(data)
+
+        interpolationData.directMessages = []; // array holding data about five most recent direct messages sent
+
+        data.forEach((directMessage) => {
+
+            // build a direct message object to store in interpolationData.directMessages
+            // has to contain -message body -date the message was sent -time the message was sent
+
+            let obj = {};
+            obj.text = directMessage.text;
+            let date = new Date(directMessage.created_at);
+            obj.date = date.toDateString();
+            obj.time = date.toTimeString();
+
+            interpolationData.directMessages.push(obj);
+        });
+
+        console.log(interpolationData.directMessages);
+
         next();
     });
 });

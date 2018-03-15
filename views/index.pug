@@ -107,7 +107,7 @@ html(lang='en')
                   .circle--fluid--cell.circle--fluid--primary
                     a.app--tweet--author
                       .app--avatar(style='background-image: url(images/f-spore.png)')
-                        img(src=friend.profile_image_url)
+                        img(src='images/f-spore.png')
                       h4 #{friend.name}
                       p @#{friend.screen_name}
                   .circle--fluid--cell
@@ -117,32 +117,13 @@ html(lang='en')
           ul.app--message--list
             li
               h3
-                | Conversation with 
-                a Jill Spore
+                | Private messages sent by 
+                a #{name}
               ul.app--message--conversation
-                li.app--message
-                  .app--avatar(style='background-image: url(images/f-spore.png)')
-                    img(src='images/f-spore.png')
-                  p.app--message--text How are things?
-                  p.app--message--timestamp 3 hours ago
-                li.app--message--me
-                  .app--avatar(style='background-image: url(images/m-spore.png)')
-                    img(src='images/m-spore.png')
-                  p.app--message--text
-                    | Great! How about you? Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  p.app--message--timestamp 2 hours ago
-                li.app--message
-                  .app--avatar(style='background-image: url(images/f-spore.png)')
-                    img(src='images/f-spore.png')
-                  p.app--message--text Fantastic! You wanna grab lunch?
-                  p.app--message--timestamp 2 hours ago
-                li.app--message--me
-                  .app--avatar(style='background-image: url(images/m-spore.png)')
-                    img(src='images/m-spore.png')
-                  p.app--message--text Totes mcgotes. How about Mackey's?
-                  p.app--message--timestamp 1 hour ago
-                li.app--message
-                  .app--avatar(style='background-image: url(images/f-spore.png)')
-                    img(src='images/f-spore.png')
-                  p.app--message--text Aww yeah.. I'm craving a Triple Quarter Mack!
-                  p.app--message--timestamp 1 hour ago
+                each directMessage in directMessages
+                  li.app--message
+                    .app--avatar(style='background-image: url(images/f-spore.png)')
+                      img(src='images/f-spore.png')
+                    p.app--message--text= directMessage.text
+                    p.app--message--timestamp= directMessage.date
+                
