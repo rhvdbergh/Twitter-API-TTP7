@@ -57,8 +57,7 @@ app.get('/', (req, res, next) => {
 
             interpolationData.tweets.push(obj);
         });
-
-        next();
+        g next();
     });
 });
 
@@ -107,9 +106,6 @@ app.get('/', (req, res, next) => {
 
             interpolationData.directMessages.push(obj);
         });
-
-        console.log(interpolationData.directMessages);
-
         next();
     });
 });
