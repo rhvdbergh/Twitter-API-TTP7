@@ -64,9 +64,16 @@ app.get('/', (req, res, next) => {
 // retrieve 5 most recent friends (i.e. persons that the user started following)
 app.get('/', (req, res, next) => {
     T.get('friends/list', { count: 5 }, function(err, data, response) {
-        // console.log(data);
+        console.log(data);
 
         interpolationData.friends = []; // array holding data about five most recent friends
+
+        // if the rate limit is exceeded (more calls per hour than Twitter allows)
+        // the following error object is returned by the Twitter API
+        // { errors: [ { message: 'Rate limit exceeded', code: 88 } ] }
+        // the rate limit is lowest for recent friends, so handle the error here
+        // test if the object returned is an error
+        // if so, redirect to an error page
 
         // cycle through each tweet and retrieve the data to render
         data.users.forEach((friend) => {
