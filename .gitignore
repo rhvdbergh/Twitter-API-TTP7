@@ -1,3 +1,4 @@
 node_modules/
 config.js
-sample_tweet.json
+sample_tweet.js
+sample_friends.js
