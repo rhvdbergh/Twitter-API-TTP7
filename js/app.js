@@ -38,8 +38,8 @@ app.get('/', (req, res, next) => {
         interpolationData.screen_name = data[0].user.screen_name;
         interpolationData.name = data[0].user.name;
         interpolationData.friends_count = data[0].user.friends_count;
+        interpolationData.profile_image_url = data[0].user.profile_image_url;
         interpolationData.tweets = []; // array holding data about five most recent tweets
-
 
         // cycle through each tweet and retrieve the data to render
         data.forEach((tweet) => {

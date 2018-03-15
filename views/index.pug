@@ -42,8 +42,8 @@ html(lang='en')
       form
         .circle--fluid
           .circle--fluid--cell.circle--fluid--primary.align-bottom.app--tweet--post
-            .app--avatar(style='background-image: url(images/m-spore.png)')
-              img(src='images/m-spore.png')
+            .app--avatar(style=`background-image: url(${profile_image_url})`)
+              img(src=`${profile_image_url}`)
             textarea#tweet-textarea.circle--textarea--input(placeholder="What's happening?")
             strong#tweet-char.app--tweet--char 140
           .circle--fluid--cell.align-bottom
@@ -67,8 +67,8 @@ html(lang='en')
               li
                 strong.app--tweet--timestamp= tweet.date
                 a.app--tweet--author
-                  .app--avatar(style='background-image: url(images/f-spore.png)')
-                    img(src='images/f-spore.png')
+                  .app--avatar(style=`background-image: url(${profile_image_url})`)
+                    img(src=`${profile_image_url}`)
                   h4 #{name}
                   |  @#{screen_name}
                 p= tweet.text
@@ -106,8 +106,8 @@ html(lang='en')
                 .circle--fluid
                   .circle--fluid--cell.circle--fluid--primary
                     a.app--tweet--author
-                      .app--avatar(style='background-image: url(images/f-spore.png)')
-                        img(src='images/f-spore.png')
+                      .app--avatar(style=`background-image: url(${friend.profile_image_url})`)
+                        img(src=`${friend.profile_image_url}`)
                       h4 #{friend.name}
                       p @#{friend.screen_name}
                   .circle--fluid--cell
@@ -122,8 +122,8 @@ html(lang='en')
               ul.app--message--conversation
                 each directMessage in directMessages
                   li.app--message
-                    .app--avatar(style='background-image: url(images/f-spore.png)')
-                      img(src='images/f-spore.png')
+                    .app--avatar(style=`background-image: url(${profile_image_url})`)
+                      img(src=`${profile_image_url}`)
                     p.app--message--text= directMessage.text
                     p.app--message--timestamp= directMessage.date
                 
