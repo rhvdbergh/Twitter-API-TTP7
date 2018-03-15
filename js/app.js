@@ -57,7 +57,7 @@ app.get('/', (req, res, next) => {
 
             interpolationData.tweets.push(obj);
         });
-        g next();
+        next();
     });
 });
 
