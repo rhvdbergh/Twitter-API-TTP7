@@ -12,6 +12,7 @@
 
 const express = require('express');
 const app = express();
+const bodyParser = require('body-parser');
 
 const pug = require('pug');
 
@@ -24,6 +25,9 @@ let interpolationData = []; // a variable to hold data to interpolate in pug
 
 // set up route to serve static files
 app.use(express.static('public'));
+
+// set up bodyParser
+const urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 // set up view engine - we'll render with pug
 app.set('view engine', 'pug');
@@ -64,7 +68,7 @@ app.get('/', (req, res, next) => {
 // retrieve 5 most recent friends (i.e. persons that the user started following)
 app.get('/', (req, res, next) => {
     T.get('friends/list', { count: 5 }, function(err, data, response) {
-        console.log(data);
+        // console.log(data);
 
         interpolationData.friends = []; // array holding data about five most recent friends
 
@@ -74,6 +78,17 @@ app.get('/', (req, res, next) => {
         // the rate limit is lowest for recent friends, so handle the error here
         // test if the object returned is an error
         // if so, redirect to an error page
+
+        // Check to see if the data returned from Twitter API is an errors object
+        if (data.errors) {
+            console.log('check', data.errors[0].message)
+            if (data.errors[0].message === "Rate limit exceeded") {
+                err.message = 'Rate limit exceeded. Please try again in 15 minutes.';
+            } else {
+                err.message = 'Something went wrong. Please try again later.';
+            }
+            return next(err);
+        }
 
         // cycle through each tweet and retrieve the data to render
         data.users.forEach((friend) => {
@@ -96,7 +111,7 @@ app.get('/', (req, res, next) => {
 app.get('/', (req, res, next) => {
     // note, this API endpoint is deprecated and will be retired on June 19, 2018
     T.get('direct_messages/sent', { count: 5 }, function(err, data, response) {
-        console.log(data)
+        // console.log(data)
 
         interpolationData.directMessages = []; // array holding data about five most recent direct messages sent
 
@@ -121,6 +136,22 @@ app.get('/', (req, res, next) => {
 app.get('/', (req, res, next) => {
     // render the index.pug file with data passed in as an object
     res.render('index', interpolationData);
+});
+
+// send new tweet when "tweet" button is clicked
+app.post('/', urlencodedParser, (req, res, next) => {
+
+    // twit module sends update status request to Twitter API
+    T.post('statuses/update', { status: req.body.new_tweet_text }, function(err, data, response) {
+        console.log(data);
+        console.log('User has sent a tweet! Twitter API app listening on port 3000');
+    });
+
+    res.redirect('/');
+});
+
+app.use('/', (err, req, res, next) => {
+    res.render('error', { errorMessage: err.message });
 });
 
 // run the app on port 3000, and send a message to the console stating the port
