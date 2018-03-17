@@ -29,6 +29,12 @@ app.use(express.static('public'));
 // set up bodyParser
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
 
+// set up JSON bodyParser
+const jsonParser = bodyParser.json();
+
+// set up text bodyParser
+const textParser = bodyParser.text();
+
 // set up view engine - we'll render with pug
 app.set('view engine', 'pug');
 
@@ -76,10 +82,6 @@ app.get('/', (req, res, next) => {
 app.get('/', (req, res, next) => {
     T.get('friends/list', { count: 5 }, function(err, data, response) {
 
-        if (err) {
-            err.message = 'Something went wrong while trying to retrieve recent friends. Please try again later.';
-            next(err);
-        }
         interpolationData.friends = []; // array holding data about five most recent friends
 
         // if the rate limit is exceeded (more calls per hour than Twitter allows)
@@ -93,10 +95,14 @@ app.get('/', (req, res, next) => {
         if (data.errors) {
             if (data.errors[0].message === "Rate limit exceeded") {
                 err.message = 'Rate limit exceeded. Please try again in 15 minutes.';
-            } else {
-                err.message = 'Something went wrong. Please try again later.';
+                return next(err);
             }
-            return next(err);
+        }
+
+        // if there is another error than rate limit exceeded
+        if (err) {
+            err.message = 'Something went wrong while trying to retrieve recent friends. Please try again later.';
+            next(err);
         }
 
         // cycle through each tweet and retrieve the data to render
@@ -125,6 +131,7 @@ app.get('/', (req, res, next) => {
             err.message = 'Something went wrong while trying to retrieve direct messages. Please try again later.';
             return next(err);
         }
+
         interpolationData.directMessages = []; // array holding data about five most recent direct messages sent
 
         data.forEach((directMessage) => {
@@ -151,16 +158,36 @@ app.get('/', (req, res, next) => {
 });
 
 // send new tweet when "tweet" button is clicked
-app.post('/', urlencodedParser, (req, res, next) => {
+// this is in response to an AJAX call from the client
+app.post('/send-tweet', urlencodedParser, (req, res, next) => {
 
     // twit module sends update status request to Twitter API
-    T.post('statuses/update', { status: req.body.new_tweet_text }, function(err, data, response) {
+    // the req.body.tweetText contains the text the user wants to tweet
+    T.post('statuses/update', { status: req.body.tweetText }, function(err, data, response) {
 
         if (err) {
             return next(err);
         }
+        // needs the following info:
+        // date, as in tweet.date
+        // let date = new Date(tweet.created_at);
+        // obj.date = date.toDateString();
+
+        const now = new Date();
+        let dateNow = now.toDateString();
+
+        // construct html to send back to render a single tweet
+        // this will be injected into the page on the client-side using jQuery
+        res.render('single-tweet', {
+            date: dateNow,
+            profile_image_url: interpolationData.profile_image_url,
+            screen_name: interpolationData.screen_name,
+            name: interpolationData.name,
+            text: req.body.tweetText,
+            retweet_count: '0',
+            favorite_count: '0'
+        });
         console.log('User has sent a tweet! Twitter API app listening on port 3000');
-        res.redirect('/');
     });
 });
 
