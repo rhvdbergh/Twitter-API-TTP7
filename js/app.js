@@ -38,11 +38,18 @@ app.set('view engine', 'pug');
 app.get('/', (req, res, next) => {
     T.get('statuses/user_timeline', { count: 5 }, function(err, data, response) {
 
+        if (err) {
+            err.message = 'Something went wrong with trying to retrieve recent tweets. Please try again later.';
+            return next(err);
+        }
+
         // save the username - this assumes the user has at least one tweet
         interpolationData.screen_name = data[0].user.screen_name;
         interpolationData.name = data[0].user.name;
         interpolationData.friends_count = data[0].user.friends_count;
         interpolationData.profile_image_url = data[0].user.profile_image_url;
+        interpolationData.profile_background_image_url = data[0].user.profile_background_image_url;
+        interpolationData.profile_banner_url = data[0].user.profile_banner_url;
         interpolationData.tweets = []; // array holding data about five most recent tweets
 
         // cycle through each tweet and retrieve the data to render
@@ -68,8 +75,11 @@ app.get('/', (req, res, next) => {
 // retrieve 5 most recent friends (i.e. persons that the user started following)
 app.get('/', (req, res, next) => {
     T.get('friends/list', { count: 5 }, function(err, data, response) {
-        // console.log(data);
 
+        if (err) {
+            err.message = 'Something went wrong while trying to retrieve recent friends. Please try again later.';
+            next(err);
+        }
         interpolationData.friends = []; // array holding data about five most recent friends
 
         // if the rate limit is exceeded (more calls per hour than Twitter allows)
@@ -81,7 +91,6 @@ app.get('/', (req, res, next) => {
 
         // Check to see if the data returned from Twitter API is an errors object
         if (data.errors) {
-            console.log('check', data.errors[0].message)
             if (data.errors[0].message === "Rate limit exceeded") {
                 err.message = 'Rate limit exceeded. Please try again in 15 minutes.';
             } else {
@@ -111,8 +120,11 @@ app.get('/', (req, res, next) => {
 app.get('/', (req, res, next) => {
     // note, this API endpoint is deprecated and will be retired on June 19, 2018
     T.get('direct_messages/sent', { count: 5 }, function(err, data, response) {
-        // console.log(data)
 
+        if (err) {
+            err.message = 'Something went wrong while trying to retrieve direct messages. Please try again later.';
+            return next(err);
+        }
         interpolationData.directMessages = []; // array holding data about five most recent direct messages sent
 
         data.forEach((directMessage) => {
@@ -143,15 +155,23 @@ app.post('/', urlencodedParser, (req, res, next) => {
 
     // twit module sends update status request to Twitter API
     T.post('statuses/update', { status: req.body.new_tweet_text }, function(err, data, response) {
-        console.log(data);
-        console.log('User has sent a tweet! Twitter API app listening on port 3000');
-    });
 
-    res.redirect('/');
+        if (err) {
+            return next(err);
+        }
+        console.log('User has sent a tweet! Twitter API app listening on port 3000');
+        res.redirect('/');
+    });
 });
 
-app.use('/', (err, req, res, next) => {
+// error handler
+app.use((err, req, res, next) => {
     res.render('error', { errorMessage: err.message });
+});
+
+// if the resource can't be found, return a 404 error:
+app.use((req, res, next) => {
+    res.render('error', { errorMessage: 'Oops! That page does not exist. (404)' });
 });
 
 // run the app on port 3000, and send a message to the console stating the port
