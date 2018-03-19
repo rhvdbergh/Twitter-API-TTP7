@@ -149,16 +149,23 @@ router.post('/send-tweet', urlencodedParser, (req, res, next) => {
         const now = new Date();
         let dateNow = now.toDateString();
 
-        // construct html to send back to render a single tweet
-        // this will be injected into the page on the client-side using jQuery
-        res.render('single-tweet', {
+        // construct an object containing info about this tweet - so the pug template can use 
+        // dot notation (e.g. tweet.date) which is similar to the effect
+        // of rendering a list of tweets with 'each tweet in tweets' in pug syntax
+        const tweetInfo = {
             date: dateNow,
-            profile_image_url: interpolationData.profile_image_url,
-            screen_name: interpolationData.screen_name,
-            name: interpolationData.name,
             text: req.body.tweetText,
             retweet_count: '0',
             favorite_count: '0'
+        }
+
+        // construct html to send back to render a single tweet
+        // this will be injected into the page on the client-side using jQuery
+        res.render('single-tweet', {
+            profile_image_url: interpolationData.profile_image_url,
+            screen_name: interpolationData.screen_name,
+            name: interpolationData.name,
+            tweet: tweetInfo
         });
         console.log('User has sent a tweet! Twitter API router listening on port 3000');
     });
