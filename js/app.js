@@ -26,7 +26,10 @@ app.set('view engine', 'pug');
 
 // error handler
 app.use((err, req, res, next) => {
-    res.render('error', { errorMessage: err.message });
+    // send the error message to the console for developers
+    console.log(err.message);
+    // send a friendly error message to the page
+    res.render('error', { errorMessage: 'Oops! Something went wrong!' });
 });
 
 // if the resource can't be found, return a 404 error:
