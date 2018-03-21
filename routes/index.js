@@ -16,7 +16,7 @@ let interpolationData = []; // a variable to hold data to interpolate in pug
 // ------- retrieve the tweets, each section in succession
 
 // retrieve 5 most recent tweets
-router.get('/', (req, res, next) => {
+router.use('/', (req, res, next) => {
     T.get('statuses/user_timeline', { count: 5 }, function(err, data, response) {
 
         if (err) {
@@ -54,7 +54,7 @@ router.get('/', (req, res, next) => {
 });
 
 // retrieve 5 most recent friends (i.e. persons that the user started following)
-router.get('/', (req, res, next) => {
+router.use('/', (req, res, next) => {
     T.get('friends/list', { count: 5 }, function(err, data, response) {
 
         interpolationData.friends = []; // array holding data about five most recent friends
@@ -98,7 +98,7 @@ router.get('/', (req, res, next) => {
 });
 
 // retrieves last 5 private messages sent
-router.get('/', (req, res, next) => {
+router.use('/', (req, res, next) => {
     // note, this API endpoint is deprecated and will be retired on June 19, 2018
     T.get('direct_messages/sent', { count: 5 }, function(err, data, response) {
 
