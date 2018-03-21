@@ -3,7 +3,9 @@ const router = express.Router(); // set up router
 
 const Twit = require('twit');
 const config = require('../js/config.js');
-const T = new Twit(config.accessDetails);
+// config.js is a configuration object, using the format module.exports = {options ...}
+// i.e. it returns a single object with configuration options
+const T = new Twit(config);
 
 // set up bodyParser
 const bodyParser = require('body-parser');
